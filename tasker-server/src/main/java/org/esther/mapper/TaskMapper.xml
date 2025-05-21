@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  タスク管理用MyBatisマッパー
+  @author Esther
+  @since 2025/02/26
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http:myBatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.esther.mapper.TaskMapper">
+
+    <!-- タスク新規作成 -->
+    <insert id="createTask" parameterType="org.esther.bean.Task" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task (
+            task_code, task_name, description, detailed_description,
+            category_id, assignee_id, creator_id,
+            start_date, updated_at, status_id, deadline, priority_id, progress
+        )
+        VALUES (
+            #{taskCode}, #{taskName}, #{description}, #{detailedDescription},
+            #{categoryId}, #{assigneeId}, #{creatorId},
+            #{startDate}, NOW(), #{statusId}, #{deadline}, #{priorityId}, #{progress}
+        );
+    </insert>
+
+    <!-- タスク更新 -->
+    <update id="updateTask" parameterType="org.esther.bean.Task">
+        UPDATE task
+        <set>
+            <if test="taskCode != null"> task_code = #{taskCode},</if>
+            <if test="taskName != null"> task_name = #{taskName},</if>
+            <if test="description != null"> description = #{description},</if>
+            <if test="detailedDescription != null"> detailed_description = #{detailedDescription},</if>
+            <if test="categoryId != null"> category_id = #{categoryId},</if>
+            <if test="assigneeId != null"> assignee_id = #{assigneeId},</if>
+            <if test="creatorId != null"> creator_id = #{creatorId},</if>
+            <if test="startDate != null"> start_date = #{startDate},</if>
+            <if test="statusId != null"> status_id = #{statusId},</if>
+            <if test="deadline != null"> deadline = #{deadline},</if>
+            <if test="priorityId != null"> priority_id = #{priorityId},</if>
+            <if test="progress != null"> progress = #{progress},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <!-- 単一タスク状態・進捗更新 -->
+    <update id="updateTaskStateById" >
+        UPDATE task
+        SET status_id =#{statusId},
+        progress = #{progress},
+        updated_at = NOW()
+        WHERE id = #{taskId}
+    </update>
+
+    <!-- 複数タスク状態一括更新 -->
+    <update id="updateTaskState">
+        UPDATE task
+        SET status_id = #{statusId},
+            progress = #{progress},
+            updated_at = NOW()
+        WHERE id IN
+        <foreach  collection="taskIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- タスク詳細取得（ID指定） -->
+    <select id="getTaskById" parameterType="Long" resultType="org.esther.bean.Task">
+        SELECT t.id, t.task_code, t.task_name, t.description, t.detailed_description,
+        t.status_id, s.status_name,
+        t.priority_id, p.priority_name,
+        t.start_date, t.deadline, t.progress, t.assignee_id, u.nickname, t.updated_at
+        FROM task t
+        LEFT JOIN task_status s ON t.status_id = s.id
+        LEFT JOIN task_priority p ON t.priority_id = p.id
+        LEFT JOIN user u ON t.assignee_id = u.id
+        WHERE t.id = #{id}
+    </select>
+
+    <!-- （管理者用）全タスク取得　※現在はService層で権限制御-->
+    <select id="getAllTasksByAdmin" resultType="org.esther.bean.Task">
+        SELECT t.id, t.task_code, t.task_name, t.description, t.detailed_description,
+        t.status_id, s.status_name,
+        t.priority_id, p.priority_name,
+        t.start_date, t.deadline, t.progress, t.assignee_id, t.updated_at
+        FROM task t
+        LEFT JOIN task_status s ON t.status_id = s.id
+        LEFT JOIN task_priority p ON t.priority_id = p.id
+        <where>
+            <if test="keywords != null">
+                AND (t.task_name LIKE CONCAT('%', #{keywords}, '%') OR t.description LIKE CONCAT('%', #{keywords}, '%'))
+            </if>
+        </where>
+        ORDER BY t.updated_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- タスク一括削除 -->
+    <delete id="deleteTaskByIds">
+        DELETE FROM task WHERE id IN
+        <foreach collection="taskIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- タスク総件数取得（ページネーション用） -->
+    <select id="getTaskCount" resultType="int">
+        SELECT COUNT(*) FROM task
+        <where>
+            <if test="statusId != null"> AND status_id = #{statusId} </if>
+            <if test="priorityId != null"> AND priority_id = #{priorityId}</if>
+            <if test="keywords != null and keywords != ''">
+                AND (
+                    task_name LIKE CONCAT('%', #{keywords}, '%')
+                    OR description LIKE CONCAT('%', #{keywords}, '%')
+                )
+            </if>
+            <if test="assigneeId != null"> AND assignee_id = #{assigneeId} </if>
+        </where>
+    </select>
+
+    <!-- タスク一覧取得（ページネーション・条件検索対応） -->
+    <select id="getAllTasks" resultType="org.esther.bean.Task">
+        SELECT t.id, t.task_code, t.task_name, t.description, t.detailed_description,
+        t.status_id, s.status_name,
+        t.priority_id, p.priority_name,
+        t.start_date, t.deadline, t.progress,
+        t.assignee_id, u.nickname, t.updated_at
+        FROM task t
+        LEFT JOIN task_status s ON t.status_id = s.id
+        LEFT JOIN task_priority p ON t.priority_id = p.id
+        LEFT JOIN user u ON t.assignee_id = u.id
+        <where>
+            <if test="statusId != null"> AND t.status_id = #{statusId} </if>
+            <if test="priorityId != null"> AND t.priority_id = #{priorityId} </if>
+            <if test="keywords != null and keywords != ''">
+                AND (
+                    t.task_name LIKE CONCAT('%', #{keywords}, '%')
+                    OR t.description LIKE CONCAT('%', #{keywords}, '%')
+                )
+            </if>
+            <if test="assigneeId != null"> AND t.assignee_id = #{assigneeId} </if>
+        </where>
+        ORDER BY t.updated_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+</mapper>

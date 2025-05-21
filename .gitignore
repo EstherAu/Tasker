@@ -1,0 +1,15 @@
+# Node Dependencies and Packaging Catalog
+node_modules/
+/dist/
+
+# Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IntelliJ IDEA
+.idea
+
+# Build output
+target/
+!.mvn/wrapper/maven-wrapper.jar

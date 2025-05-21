@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    役割マッパーXML
+    ユーザーへの役割割当・検索SQL
+    @author Esther
+    @since 2025/02/26
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.esther.mapper.RolesMapper">
+
+    <!-- 役割の割当（roles_user中間テーブルへ挿入） -->
+    <insert id="addRoles">
+        INSERT INTO roles_user VALUES
+        <foreach collection="roles" item="role" separator=",">
+            (null,#{role},#{uid})
+        </foreach>
+    </insert>
+
+    <!-- ユーザーIDから役割リストを取得 -->
+    <select id="getRolesByUid" parameterType="long" resultType="org.esther.bean.Role">
+        SELECT r.* FROM roles r,roles_user ru WHERE r.`id`=ru.`rid` AND ru.`uid`=#{uid}
+    </select>
+</mapper>

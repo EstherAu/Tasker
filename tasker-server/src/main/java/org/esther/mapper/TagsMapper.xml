@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  タグ管理用MyBatisマッパー（現時点では未使用。将来の機能拡張を見越して定義）
+  @author Esther
+  @since 2025/02/26
+-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.esther.mapper.TagsMapper">
+    <delete id="deleteTagsByAid" parameterType="Long">
+      DELETE FROM article_tags WHERE aid=#{aid}
+    </delete>
+    <insert id="saveTags">
+        INSERT IGNORE INTO tags(tagName) VALUES
+        <foreach collection="tags" item="tag" separator=",">
+            (#{tag})
+        </foreach>
+    </insert>
+    <select id="getTagsIdByTagName" resultType="long">
+        SELECT id FROM tags WHERE tagName IN
+        <foreach collection="tagNames" item="tagName" separator="," open="(" close=")">
+            #{tagName}
+        </foreach>
+    </select>
+    <insert id="saveTags2TaskTags">
+        INSERT INTO task_tags(aid,tid) VALUES
+        <foreach collection="tagIds" item="tagId" separator=",">
+            (#{aid},#{tagId})
+        </foreach>
+    </insert>
+</mapper>

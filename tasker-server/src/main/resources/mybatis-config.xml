@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--
+    MyBatis Global Configuration File
+    - Main settings: logging, camelCase mapping, etc.
+-->
+
+<configuration>
+    <settings>
+        <!-- Set log output implementation to STDOUT (for SQL debug output) -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+
+        <!-- Enable automatic mapping from snake_case (e.g., task_name) to camelCase (e.g., taskName) -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+</configuration>
