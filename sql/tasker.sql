@@ -8,21 +8,6 @@ USE `tasker`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- ----------------------------
--- Table structure for category
--- ----------------------------
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'カテゴリ主キー',
-  `cate_name` varchar(64) DEFAULT NULL COMMENT 'カテゴリ名',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of category
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for roles
@@ -81,23 +66,6 @@ INSERT INTO `roles_user` (`id`, `rid`, `uid`) VALUES (124, 3, 13);
 INSERT INTO `roles_user` (`id`, `rid`, `uid`) VALUES (128, 2, 10);
 INSERT INTO `roles_user` (`id`, `rid`, `uid`) VALUES (129, 5, 10);
 INSERT INTO `roles_user` (`id`, `rid`, `uid`) VALUES (130, 1, 6);
-COMMIT;
-
--- ----------------------------
--- Table structure for tags
--- ----------------------------
-DROP TABLE IF EXISTS `tags`;
-CREATE TABLE `tags` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'タグ主キー',
-  `tag_name` varchar(32) DEFAULT NULL COMMENT 'タグ名',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tag_name` (`tag_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of tags
--- ----------------------------
-BEGIN;
 COMMIT;
 
 -- ----------------------------

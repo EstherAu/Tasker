@@ -48,8 +48,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                // カテゴリー管理（/admin/category/all）はログイン必須
-                .antMatchers("/admin/category/all").authenticated()
                 // /admin配下と/regは「管理者」ロールのみ許可（/admin/**的URL都需有超级管理员角色，如果使用.hasAuthority()方法来配置，需要在参数中加上ROLE_,如下.hasAuthority("ROLE_超级管理员")）
                 .antMatchers("/admin/**","/reg").hasRole("管理者")
                 // その他全てのリクエストは認証済みユーザーのみ許可
