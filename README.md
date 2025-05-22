@@ -138,6 +138,8 @@ Tasker/
 
 > - 開発モード（npm run dev）: [http://localhost:8080](http://localhost:8080)
 > - バックエンドにビルド済みファイル配置後: [http://localhost:8081/index.html](http://localhost:8081/index.html)
+> - デモページ（静的フロントエンド）: https://estherau.github.io/tasker-pages/
+* デモページはフロントエンドのみの静的展示です。全機能（ログインやタスク操作など）をご利用いただくには、ローカルでバックエンドを起動してください。
 
 ---
 

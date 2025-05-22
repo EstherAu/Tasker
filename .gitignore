@@ -1,3 +1,6 @@
+# macOS
+.DS_Store
+
 # Node Dependencies and Packaging Catalog
 node_modules/
 /dist/
